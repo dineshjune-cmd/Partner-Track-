@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1f4b">
+<title>Partners Diary</title>
+<style>
+:root{--n:#0b1f4b;--b:#1769e0;--bg:#f4f7fb;--c:#fff;--t:#17233d;--m:#718096;--l:#e5eaf2;--r:#df3b4c;--o:#e88920;--gr:#159a62}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--t)}
+.app{max-width:540px;margin:auto;min-height:100vh;padding-bottom:88px}
+header{background:linear-gradient(135deg,#071941,#1769e0);color:#fff;padding:22px 18px 28px;border-radius:0 0 28px 28px}
+.brand{font-size:21px;font-weight:850}.sub{font-size:11px;opacity:.75}h1{font-size:26px;margin:22px 0 4px}.hero{font-size:13px;opacity:.78}
+main{padding:17px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{background:#fff;border:1px solid var(--l);border-radius:18px;padding:15px;box-shadow:0 5px 18px #1120440a}.metric{font-size:26px;font-weight:850}.label{font-size:11px;color:var(--m)}
+.section{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 10px}.section h2{font-size:16px;margin:0}.btn{border:0;border-radius:13px;padding:11px 14px;font-weight:750;cursor:pointer}.primary{background:var(--b);color:#fff}.soft{background:#eaf1ff;color:var(--b)}.danger{background:#ffe9ec;color:#bd3040}.full{width:100%}.action{display:flex;gap:8px;margin-top:10px}.action>*{flex:1;text-align:center;text-decoration:none}.search{width:100%;padding:13px;border:1px solid var(--l);border-radius:13px;background:#fff;outline:0}
+.row{display:flex;align-items:center;gap:11px}.avatar{width:42px;height:42px;border-radius:14px;background:#eaf1ff;color:var(--b);display:grid;place-items:center;font-weight:850}.name{font-weight:780}.meta{font-size:11px;color:var(--m);margin-top:3px}.pill{margin-left:auto;font-size:10px;padding:5px 8px;border-radius:20px;font-weight:800}.red{background:#ffe5e8;color:#c52e3d}.orange{background:#fff0d5;color:#b56a00}.green{background:#e1f7eb;color:#087447}.blue{background:#e6efff;color:#1558b8}
+.tabs{display:flex;background:#e9eef7;border-radius:14px;padding:4px;margin-bottom:12px}.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:11px;font-weight:750;color:#6d7890}.tabs .sel{background:#fff;color:var(--b);box-shadow:0 2px 8px #11204412}
+nav{position:fixed;bottom:0;left:0;right:0;max-width:540px;margin:auto;background:#fff;border-top:1px solid var(--l);display:flex;justify-content:space-around;padding:9px 5px calc(9px + env(safe-area-inset-bottom));z-index:8}nav button{border:0;background:none;color:#7b879c;font-size:10px;font-weight:750}nav span{display:block;font-size:20px}nav .on{color:var(--b)}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;z-index:20}.sheet{width:100%;max-width:540px;margin:auto;background:#fff;border-radius:25px 25px 0 0;padding:18px;max-height:92vh;overflow:auto}.close{float:right;border:0;border-radius:50%;width:32px;height:32px}.field{margin:9px 0}.field label{font-size:11px;color:var(--m);font-weight:750;display:block;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid var(--l);border-radius:11px;background:#fafbfe}.hidden{display:none}.empty{text-align:center;color:var(--m);padding:28px}.toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);background:#17233d;color:#fff;padding:11px 16px;border-radius:22px;font-size:12px;display:none;z-index:50;box-shadow:0 6px 20px #0003}.choice{display:flex;gap:8px}.choice button{flex:1}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">Partners Diary</div><div class="sub">Recruitment Team CRM • Offline</div><h1 id="greet">Good day 👋</h1><div class="hero">Manage recruiting partners, advisor candidates and follow-ups.</div></header>
+
+<div id="home"><main>
+<div class="section"><h2>Recruitment Overview</h2><button class="btn soft" onclick="openBackup()">Backup</button></div>
+<div class="grid">
+<div class="card"><div class="label">Partner L1</div><div class="metric" id="mPartners">0</div></div>
+<div class="card"><div class="label">Advisor LA</div><div class="metric" id="mCandidates">0</div></div>
+<div class="card"><div class="label">Today's Follow-ups</div><div class="metric" id="mToday">0</div></div>
+<div class="card"><div class="label">Overdue</div><div class="metric" id="mOverdue">0</div></div>
+<div class="card"><div class="label">Appointments</div><div class="metric" id="mAppt">0</div></div>
+<div class="card"><div class="label">Active Advisors</div><div class="metric" id="mActive">0</div></div>
+</div>
+<div class="action"><button class="btn primary" onclick="openForm('candidate')">＋ Advisor LA</button><button class="btn soft" onclick="openForm('partner')">＋ Partner L1</button></div>
+<div class="section"><h2>Urgent Follow-ups</h2><button class="btn soft" onclick="show('follow')">View all</button></div><div id="urgent"></div>
+</main></div>
+
+<div id="people" class="hidden"><main>
+<div class="tabs"><button id="tc" class="sel" onclick="setType('candidate')">Advisor LA</button><button id="tp" onclick="setType('partner')">Partner L1</button></div>
+<input id="search" class="search" placeholder="Search name, mobile, location…" oninput="renderPeople()"><div id="peopleList" style="margin-top:12px"></div>
+</main></div>
+
+<div id="follow" class="hidden"><main><div class="section"><h2>Follow-ups</h2></div><div id="followList"></div></main></div>
+
+<nav><button class="on" onclick="show('home',this)"><span>⌂</span>Home</button><button onclick="show('people',this)"><span>👥</span>People</button><button onclick="show('follow',this)"><span>📅</span>Follow-ups</button><button onclick="openForm('candidate')"><span>＋</span>Add</button></nav>
+</div>
+
+<div class="modal" id="modal"><div class="sheet"><button class="close" onclick="closeForm()">×</button><h2 id="formTitle">Add Advisor LA</h2>
+<input id="editId" type="hidden"><input id="formType" type="hidden">
+<div class="field"><label>Name *</label><input id="fName"></div>
+<div class="field"><label>Mobile</label><input id="fMobile" type="tel"></div>
+<div id="candidateFields">
+<div class="field"><label>Age</label><input id="fAge" type="number"></div>
+<div class="field"><label>Occupation</label><select id="fOccupation" onchange="toggleOtherOccupation()"><option value="">Select occupation</option><option>House Wife</option><option>Retired</option><option>Business</option><option>Govt Employee</option><option>Private Employee</option><option>Govt Pensioner</option><option>Private Pensioner</option><option>Working</option><option>Job Seeker</option><option>HNI</option><option>Student</option><option>Others</option></select><input id="fOccupationOther" class="hidden" style="margin-top:7px" placeholder="Type occupation"></div>
+<div class="field"><label>Partner L1</label><select id="fPartner"></select></div>
+<div class="field"><label>Candidate Status</label><select id="fStatus"><option>New Lead</option><option>Contacted</option><option>Interested</option><option>Meeting Fixed</option><option>Meeting Attended</option><option>Documents Pending</option><option>Documents Received</option><option>Training/Exam</option><option>Appointment</option><option>Active Advisor</option><option>Not Interested</option></select></div>
+</div>
+<div id="partnerFields" class="hidden"><div class="field"><label>Partner Status</label><select id="fPStatus"><option>Active</option><option>Inactive</option><option>On Hold</option></select></div></div>
+<div class="field"><label>Location</label><input id="fLocation" placeholder="Coimbatore"></div>
+<div class="field"><label>Priority</label><select id="fPriority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+<div class="field"><label>Appointment / Meeting Date</label><input id="fAppointmentDate" type="date"></div><div class="field"><label>Appointment / Meeting Time</label><input id="fAppointmentTime" type="time"></div><div class="field"><label>Next Follow-up</label><input id="fDate" type="date"></div>
+<div class="field"><label>Next Action / Remarks</label><textarea id="fRemarks" rows="3"></textarea></div>
+<button class="btn primary full" onclick="saveRecord()">Save</button>
+</div></div>
+
+<div class="modal" id="waModal"><div class="sheet"><button class="close" onclick="closeWA()">×</button><h2>Choose WhatsApp</h2><p class="meta">Select the app you want to open. The app link is opened directly instead of using the browser.</p><div class="choice"><button class="btn soft" onclick="launchWA('whatsapp')">💬 WhatsApp</button><button class="btn soft" onclick="launchWA('business')">💼 WhatsApp Business</button></div></div></div>
+
+<div class="modal" id="backupModal"><div class="sheet"><button class="close" onclick="closeBackup()">×</button><h2>Backup, Restore & Alerts</h2><button class="btn soft full" onclick="requestNotifications()">🔔 Enable Notifications</button><div style="height:8px"></div><p class="meta">Your records are saved locally. Make a backup before changing phones or clearing app data.</p><button class="btn primary full" onclick="downloadBackup()">⬇️ Export Backup</button><div style="height:8px"></div><label class="btn soft full" style="display:block;text-align:center">⬆️ Restore Backup<input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreBackup(event)"></label></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LS_C='partners_diary_candidates_v3',LS_P='partners_diary_partners_v3';
+let C=[],P=[],currentType='candidate',waNumber='';
+
+function toggleOtherOccupation(){const show=fOccupation.value==='Others';fOccupationOther.classList.toggle('hidden',!show)}
+function requestNotifications(){
+  if(window.Android && Android.requestNativeNotifications){try{Android.requestNativeNotifications();}catch(e){}}
+  if(!('Notification' in window)){showToast('Native Android alerts requested.');return}
+  Notification.requestPermission().then(p=>showToast(p==='granted'?'Notifications enabled ✓':'Notification permission not granted'))
+}
+function notifyNow(title,body){if('Notification' in window&&Notification.permission==='granted'){try{new Notification(title,{body})}catch(e){}}}
+function checkAlerts(){const now=new Date(),t=today(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');for(const tm of ['09:00','13:00','18:00'])if(hm===tm){const k='pd_daily_'+t+'_'+tm;if(localStorage.getItem(k)!=='1'){const n=[...C,...P].filter(r=>r.date===t&&!['Active Advisor','Not Interested'].includes(r.status)).length;if(n)notifyNow('Partners Diary — Follow-up Reminder',n+' follow-up(s) are due today.');localStorage.setItem(k,'1')}}[...C,...P].forEach(r=>{if(r.appointmentDate===t&&r.appointmentTime){const target=new Date(r.appointmentDate+'T'+r.appointmentTime),diff=target-now;if(diff<=0&&diff>-60000){const k='pd_appt_'+r.id+'_'+r.appointmentDate+r.appointmentTime;if(localStorage.getItem(k)!=='1'){notifyNow('Partners Diary — Appointment',r.name+' appointment time has been reached.');localStorage.setItem(k,'1')}}}})}
+setInterval(checkAlerts,30000);
+function loadData(){
+  try{
+    C=JSON.parse(localStorage.getItem(LS_C)||'[]');
+    P=JSON.parse(localStorage.getItem(LS_P)||'[]');
+    if(!Array.isArray(C))C=[]; if(!Array.isArray(P))P=[];
+  }catch(e){C=[];P=[];showToast('Storage was reset because saved data was invalid.');}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_C,JSON.stringify(C));
+    localStorage.setItem(LS_P,JSON.stringify(P));
+    const a=JSON.parse(localStorage.getItem(LS_C)||'null'),b=JSON.parse(localStorage.getItem(LS_P)||'null');
+    if(!Array.isArray(a)||!Array.isArray(b))throw new Error('verify');
+    return true;
+  }catch(e){showToast('Could not save. Please use Export Backup and check app storage.');return false;}
+}
+function today(){return new Date().toISOString().slice(0,10)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>t.style.display='none',2200)}
+function show(id,btn){['home','people','follow'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));if(btn)btn.classList.add('on');refresh()}
+function setType(t){currentType=t;tc.classList.toggle('sel',t==='candidate');tp.classList.toggle('sel',t==='partner');renderPeople()}
+function state(r){if(!r.date)return ['No date','blue'];if(r.date<today()&&!['Active Advisor','Not Interested'].includes(r.status))return ['Overdue','red'];if(r.date===today())return ['Today','orange'];return ['Upcoming','green']}
+function esc(x){return String(x||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function card(r,t){
+ const s=state(r), partner=t==='candidate'?(P.find(p=>String(p.id)===String(r.partnerId))?.name||'Direct'):'Partner L1';
+ return `<div class="card" style="margin-bottom:10px"><div class="row"><div class="avatar">${esc(String(r.name||'?').slice(0,2).toUpperCase())}</div><div><div class="name">${esc(r.name)}</div><div class="meta">${esc(r.mobile||'No mobile')} · ${esc(r.location||'')}</div></div><span class="pill ${s[1]}">${s[0]}</span></div><div class="meta" style="margin-top:9px">${t==='candidate'?'👤 '+esc(r.status)+' · 🤝 '+esc(partner):'🤝 '+esc(r.status||'Active')}</div><div class="meta">📅 ${r.date||'No follow-up'} · ${esc(r.remarks||'No remarks')}</div><div class="action"><button class="btn soft" onclick="editRecord('${r.id}','${t}')">✏️ Edit</button><button class="btn soft" onclick="askWA('${esc(r.mobile||'')}')">💬 WhatsApp</button><a class="btn soft" href="tel:${esc(r.mobile||'')}">📞 Call</a></div></div>`;
+}
+function renderPeople(){
+ const q=(document.getElementById('search')?.value||'').toLowerCase();
+ const arr=(currentType==='candidate'?C:P).filter(r=>(r.name+' '+(r.mobile||'')+' '+(r.location||'')).toLowerCase().includes(q));
+ document.getElementById('peopleList').innerHTML=arr.length?arr.map(r=>card(r,currentType)).join(''):'<div class="empty">No records found.</div>';
+}
+function renderFollow(){
+ const arr=[...C.map(x=>({...x,_t:'candidate'})),...P.map(x=>({...x,_t:'partner'}))].filter(r=>r.date&&r.date<=today()&&!['Active Advisor','Not Interested'].includes(r.status)).sort((a,b)=>a.date.localeCompare(b.date));
+ document.getElementById('followList').innerHTML=arr.length?arr.map(r=>card(r,r._t)).join(''):'<div class="empty">🎉 No urgent follow-ups.</div>';
+}
+function refresh(){
+ const t=today(),all=[...C,...P],td=all.filter(r=>r.date===t),od=all.filter(r=>r.date&&r.date<t&&!['Active Advisor','Not Interested'].includes(r.status));
+ mPartners.textContent=P.length;mCandidates.textContent=C.length;mToday.textContent=td.length;mOverdue.textContent=od.length;mAppt.textContent=C.filter(r=>r.status==='Appointment').length;mActive.textContent=C.filter(r=>r.status==='Active Advisor').length;
+ const u=[...od,...td].slice(0,4);urgent.innerHTML=u.length?u.map(r=>card(r,C.includes(r)?'candidate':'partner')).join(''):'<div class="card empty">No urgent follow-ups.</div>';
+ renderPeople();renderFollow();
+}
+function openForm(t,id){
+ formType.value=t;editId.value=id||'';formTitle.textContent=(id?'Edit ':'Add ')+(t==='candidate'?'Advisor LA':'Partner L1');
+ candidateFields.classList.toggle('hidden',t!=='candidate');partnerFields.classList.toggle('hidden',t!=='partner');
+ fPartner.innerHTML='<option value="">Direct / No Partner</option>'+P.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+ let r=id?(t==='candidate'?C:P).find(x=>String(x.id)===String(id)):{};
+ fName.value=r.name||'';fMobile.value=r.mobile||'';fLocation.value=r.location||'';fPriority.value=r.priority||'Medium';fDate.value=r.date||today();fAppointmentDate.value=r.appointmentDate||'';fAppointmentTime.value=r.appointmentTime||'';fRemarks.value=r.remarks||'';
+ if(t==='candidate'){fAge.value=r.age||''; if(['House Wife','Retired','Business','Govt Employee','Private Employee','Govt Pensioner','Private Pensioner','Working','Job Seeker','HNI','Student'].includes(r.occupation)){fOccupation.value=r.occupation;fOccupationOther.value='';}else if(r.occupation){fOccupation.value='Others';fOccupationOther.value=r.occupation;}else{fOccupation.value='';fOccupationOther.value='';} toggleOtherOccupation(); fPartner.value=r.partnerId||'';fStatus.value=r.status||'New Lead'}else{fPStatus.value=r.status||'Active'}
+ modal.style.display='flex';setTimeout(()=>fName.focus(),100);
+}
+function closeForm(){modal.style.display='none'}
+function saveRecord(){
+ const t=formType.value,n=fName.value.trim();
+ if(!n){showToast('Please enter a name');fName.focus();return}
+ const id=editId.value||String(Date.now())+'_'+Math.random().toString(36).slice(2,7);
+ let occupationValue=(fOccupation.value==='Others'?fOccupationOther.value.trim():fOccupation.value); let r={id,name:n,mobile:fMobile.value.trim(),location:fLocation.value.trim(),priority:fPriority.value,date:fDate.value,appointmentDate:fAppointmentDate.value,appointmentTime:fAppointmentTime.value,remarks:fRemarks.value.trim()};
+ if(t==='candidate')Object.assign(r,{age:fAge.value,occupation:occupationValue,partnerId:fPartner.value,status:fStatus.value});
+ else Object.assign(r,{status:fPStatus.value});
+ const a=t==='candidate'?C:P,idx=a.findIndex(x=>String(x.id)===String(id));
+ if(idx>=0)a[idx]=r;else a.unshift(r);
+ if(!persist())return;
+ if(window.Android && Android.scheduleAppointment){
+   try{ Android.scheduleAppointment(String(r.id), String(r.name||''), String(r.appointmentDate||''), String(r.appointmentTime||'')); }catch(e){}
+ }
+ closeForm();refresh();showToast((idx>=0?'Updated':'Saved')+' successfully ✓');
+}
+function editRecord(id,t){openForm(t,id)}
+function askWA(n){waNumber=String(n||'').replace(/\D/g,'');if(!waNumber){showToast('No mobile number saved');return}waModal.style.display='flex'}
+function closeWA(){waModal.style.display='none'}
+function launchWA(kind){
+  waModal.style.display='none';
+  const phone=waNumber;
+  if(!phone){showToast('No mobile number saved');return}
+  const appScheme = kind==='business' ? 'whatsapp://send?phone='+phone : 'whatsapp://send?phone='+phone;
+  try{
+    location.href=appScheme;
+  }catch(e){
+    showToast('WhatsApp app could not be opened');
+  }
+}
+function openBackup(){backupModal.style.display='flex'}
+function closeBackup(){backupModal.style.display='none'}
+function downloadBackup(){
+ const payload={app:'Partners Diary',version:3,exportedAt:new Date().toISOString(),partners:P,candidates:C};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='Partners_Diary_Backup_'+today()+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);showToast('Backup exported ✓');
+}
+function restoreBackup(ev){
+ const file=ev.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{try{const x=JSON.parse(reader.result);if(!Array.isArray(x.partners)||!Array.isArray(x.candidates))throw new Error('invalid');P=x.partners;C=x.candidates;if(persist()){closeBackup();refresh();showToast('Backup restored ✓')}}catch(e){showToast('Invalid backup file')}};reader.readAsText(file);
+}
+loadData();
+let h=new Date().getHours();greet.textContent=h<12?'Good morning 👋':h<17?'Good afternoon 👋':'Good evening 👋';
+refresh();
+</script>
+</body></html>
